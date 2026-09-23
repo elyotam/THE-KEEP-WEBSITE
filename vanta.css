@@ -1216,29 +1216,124 @@ html[lang="he"] .beat__text {
 /* =========================================================================
    THE POINTER
 
-   A reticle: a circle with four ticks standing off it, and a gap at the
-   centre so the pointer never covers the thing it is pointing at. It turns
-   amber over anything that can be clicked.
+   A reticle that follows the pointer and opens up over anything worth
+   stopping on: a circle with four ticks standing off it, a gap at the centre
+   so it never covers what it points at, and a slight lag so it feels weighted
+   rather than glued to the mouse.
 
-   Every stroke is drawn twice, once in black at three times the width and
-   then in off-white on top, because a single off-white pixel line vanishes
-   the moment it crosses a lit part of the footage.
+   It is an element rather than a cursor: url() image, because a cursor image
+   is one bitmap the compositor draws and can never react to what is under it.
 
-   Only where there is a real pointer. A touch screen has no cursor, and
-   declaring one there does nothing but risk a stray rule.
+   The native cursor is hidden only once the script has marked the document,
+   so a visitor without JavaScript keeps an ordinary pointer. It is not
+   declared at all on touch screens, and it stands down when the accessibility
+   widget's large pointer is switched on.
    ========================================================================= */
 
 @media (hover: hover) and (pointer: fine) {
-  body,
-  .film,
-  .notice {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg fill='none' stroke='rgba(0,0,0,0.6)' stroke-width='3.4'%3E%3Ccircle cx='14' cy='14' r='8.5'/%3E%3Cpath d='M14 0.5v5.5M14 22v5.5M0.5 14h5.5M22 14h5.5'/%3E%3C/g%3E%3Cg fill='none' stroke='%23f0ede8' stroke-width='1.2'%3E%3Ccircle cx='14' cy='14' r='8.5'/%3E%3Cpath d='M14 0.5v5.5M14 22v5.5M0.5 14h5.5M22 14h5.5'/%3E%3C/g%3E%3Ccircle cx='14' cy='14' r='1.1' fill='%23f0ede8'/%3E%3C/svg%3E") 14 14, default;
+  html.has-reticle body,
+  html.has-reticle body * {
+    cursor: none;
   }
 
-  a,
-  button,
-  summary,
-  [role="button"] {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg fill='none' stroke='rgba(0,0,0,0.55)' stroke-width='3.4'%3E%3Ccircle cx='14' cy='14' r='9.5'/%3E%3Cpath d='M14 0.5v4.5M14 23v4.5M0.5 14h4.5M23 14h4.5'/%3E%3C/g%3E%3Ccircle cx='14' cy='14' r='9.5' fill='%23e0873a' fill-opacity='0.16'/%3E%3Cg fill='none' stroke='%23e0873a' stroke-width='1.5'%3E%3Ccircle cx='14' cy='14' r='9.5'/%3E%3Cpath d='M14 0.5v4.5M14 23v4.5M0.5 14h4.5M23 14h4.5'/%3E%3C/g%3E%3Ccircle cx='14' cy='14' r='1.7' fill='%23e0873a'/%3E%3C/svg%3E") 14 14, pointer;
+  /* the widget is a control surface and needs a real pointer */
+  html.has-reticle .a11y-root,
+  html.has-reticle .a11y-root * {
+    cursor: auto;
+  }
+  html.has-reticle .a11y-root :is(a, button, [role="button"]) {
+    cursor: pointer;
+  }
+
+  .reticle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    margin: -50px 0 0 -50px;
+    z-index: 120;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+    will-change: transform;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9));
+  }
+
+  .reticle[data-live="true"] {
+    opacity: 1;
+  }
+
+  .reticle svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .reticle__ring,
+  .reticle__tick,
+  .reticle__dot {
+    transition: transform 0.34s var(--ease), stroke 0.3s var(--ease),
+      fill 0.3s var(--ease), opacity 0.3s var(--ease), stroke-width 0.3s var(--ease);
+    transform-box: view-box;
+    transform-origin: 50px 50px;
+  }
+
+  .reticle__ring,
+  .reticle__tick {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+  }
+
+  .reticle__dot {
+    fill: var(--paper);
+  }
+
+  /* over a heading or a caption: wide open, quiet */
+  .reticle[data-state="read"] .reticle__ring {
+    transform: scale(2.25);
+    stroke-width: 0.5;
+  }
+  .reticle[data-state="read"] .reticle__tick {
+    transform: translateY(-18px);
+  }
+  .reticle[data-state="read"] .reticle__dot {
+    opacity: 0;
+  }
+
+  /* over something that can be clicked: open and amber */
+  .reticle[data-state="link"] .reticle__ring {
+    transform: scale(1.75);
+    stroke: var(--amber-lift);
+    stroke-width: 0.9;
+  }
+  .reticle[data-state="link"] .reticle__tick {
+    transform: translateY(-11px);
+    stroke: var(--amber-lift);
+  }
+  .reticle[data-state="link"] .reticle__dot {
+    fill: var(--amber-lift);
+    transform: scale(2);
+  }
+
+  /* the accessibility widget's own pointer wins */
+  html.a11y-cursor .reticle,
+  html.a11y-cursor-hc .reticle {
+    display: none;
+  }
+  html.a11y-cursor body,
+  html.a11y-cursor body *,
+  html.a11y-cursor-hc body,
+  html.a11y-cursor-hc body * {
+    cursor: auto;
+  }
+}
+
+/* someone who asked for less motion gets the reticle without the lag */
+@media (prefers-reduced-motion: reduce) {
+  .reticle {
+    transition: none;
   }
 }

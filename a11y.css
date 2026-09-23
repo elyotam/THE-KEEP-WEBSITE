@@ -1,0 +1,481 @@
+/* ===========================================================================
+   ACCESSIBILITY WIDGET
+
+   Everything here is prefixed a11y- and nothing targets the host page's own
+   selectors, so this drops into any site without touching its design.
+
+   One architectural note that matters: the page-wide colour effects are done
+   with backdrop-filter on a fixed overlay, NOT with filter on <html> or
+   <body>. A filter on an ancestor makes position:fixed resolve against that
+   ancestor instead of the viewport, which on this site dropped the fixed
+   masthead out of view the moment grayscale was switched on. The overlay also
+   sits below the widget, so the widget never filters itself.
+   =========================================================================== */
+
+.a11y-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  direction: rtl;
+  font-family: Arial, "Segoe UI", Tahoma, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #14181b;
+  -webkit-font-smoothing: antialiased;
+}
+
+.a11y-root *,
+.a11y-root *::before,
+.a11y-root *::after {
+  box-sizing: border-box;
+}
+
+.a11y-root :focus-visible {
+  outline: 3px solid #1b63d8;
+  outline-offset: 2px;
+}
+
+/* --- the floating button ------------------------------------------------- */
+
+.a11y-fab {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #1b63d8;
+  color: #ffffff;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.a11y-fab:hover {
+  background: #14479c;
+  transform: scale(1.06);
+}
+
+.a11y-fab svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .a11y-fab {
+    width: 50px;
+    height: 50px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .a11y-fab svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* --- the panel ----------------------------------------------------------- */
+
+.a11y-panel {
+  position: absolute;
+  right: 18px;
+  bottom: 86px;
+  width: min(360px, calc(100vw - 24px));
+  max-height: min(78vh, 640px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #ffffff;
+  border: 1px solid #c9cfd6;
+  border-radius: 12px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  display: none;
+}
+
+.a11y-panel[data-open="true"] {
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .a11y-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 74px;
+    width: auto;
+    max-height: 72vh;
+  }
+}
+
+.a11y-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #dde2e8;
+  border-radius: 12px 12px 0 0;
+}
+
+.a11y-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #14181b;
+}
+
+.a11y-x {
+  margin-inline-start: auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #c9cfd6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #14181b;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.a11y-x:hover {
+  background: #eef1f5;
+}
+
+.a11y-body {
+  padding: 14px 16px 16px;
+}
+
+.a11y-group {
+  margin-bottom: 16px;
+}
+
+.a11y-group > h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5a636c;
+}
+
+/* --- the text size stepper ----------------------------------------------- */
+
+.a11y-step {
+  display: flex;
+  direction: ltr;
+  align-items: center;
+  gap: 8px;
+}
+
+.a11y-step button {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #c9cfd6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #14181b;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.a11y-step button:hover:not(:disabled) {
+  background: #eef1f5;
+}
+
+.a11y-step button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.a11y-step output {
+  flex: 1;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #c9cfd6;
+  border-radius: 8px;
+  background: #f5f7f9;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the toggles --------------------------------------------------------- */
+
+.a11y-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.a11y-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #c9cfd6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #14181b;
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  cursor: pointer;
+}
+
+.a11y-toggle:hover {
+  background: #eef1f5;
+}
+
+.a11y-toggle .a11y-sw {
+  flex: none;
+  direction: ltr;
+  margin-inline-start: auto;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: #b9c1c9;
+  position: relative;
+  transition: background 0.16s ease;
+}
+
+.a11y-toggle .a11y-sw::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: translate 0.16s ease;
+}
+
+.a11y-toggle[aria-pressed="true"] {
+  border-color: #1b63d8;
+  background: #eaf1fd;
+  font-weight: 700;
+}
+
+.a11y-toggle[aria-pressed="true"] .a11y-sw {
+  background: #1b63d8;
+}
+
+.a11y-toggle[aria-pressed="true"] .a11y-sw::after {
+  translate: 18px 0;
+}
+
+/* --- the statement and the reset ----------------------------------------- */
+
+.a11y-reset {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #b4232a;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #9c1c23;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.a11y-reset:hover {
+  background: #fdeced;
+}
+
+.a11y-note {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #dde2e8;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #40484f;
+}
+
+.a11y-note h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #14181b;
+}
+
+.a11y-note p {
+  margin: 0 0 8px;
+}
+
+.a11y-note dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+}
+
+.a11y-note dt {
+  color: #5a636c;
+}
+
+.a11y-note dd {
+  margin: 0;
+}
+
+.a11y-note .a11y-demo {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f5f7f9;
+  color: #40484f;
+}
+
+.a11y-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ===========================================================================
+   WHAT THE TOGGLES DO TO THE PAGE
+
+   Everything below is scoped to a class on <html>, so nothing applies until a
+   visitor asks for it.
+   =========================================================================== */
+
+/* the colour effects, on an overlay rather than on an ancestor */
+.a11y-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482500;
+  pointer-events: none;
+  backdrop-filter: var(--a11y-tint, none);
+  -webkit-backdrop-filter: var(--a11y-tint, none);
+}
+
+/* Where backdrop-filter is missing, fall back to filtering the root. <html>
+   is safe; <body> is not, because it would break position:fixed. The widget
+   un-inverts itself so its own panel stays readable. */
+@supports not ((backdrop-filter: grayscale(1)) or (-webkit-backdrop-filter: grayscale(1))) {
+  .a11y-tint {
+    display: none;
+  }
+  html.a11y-grayscale {
+    filter: grayscale(1);
+  }
+  html.a11y-invert {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  html.a11y-contrast {
+    filter: contrast(1.45);
+  }
+  html.a11y-invert .a11y-root {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+/* text spacing */
+html.a11y-spacing body,
+html.a11y-spacing body * {
+  letter-spacing: 0.06em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.85 !important;
+}
+
+html.a11y-spacing .a11y-root,
+html.a11y-spacing .a11y-root * {
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  line-height: 1.5 !important;
+}
+
+/* readable font, from what the system already has */
+html.a11y-readable body,
+html.a11y-readable body * {
+  font-family: Arial, "Segoe UI", Tahoma, "Helvetica Neue", sans-serif !important;
+}
+
+/* links, marked without touching the widget or the skip link */
+html.a11y-links body a:not(.a11y-root a) {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+  outline: 1px dashed currentColor;
+  outline-offset: 2px;
+}
+
+/* headings */
+html.a11y-headings body :is(h1, h2, h3, h4, h5, h6):not(.a11y-root *) {
+  outline: 2px dashed rgba(27, 99, 216, 0.85);
+  outline-offset: 4px;
+  background: rgba(27, 99, 216, 0.1);
+}
+
+/* bigger hit areas, in a way that cannot collapse a layout */
+html.a11y-targets body :is(a, button):not(.a11y-root *) {
+  min-height: 44px;
+  padding-block: 6px;
+  padding-inline: 4px;
+}
+
+/* motion off */
+html.a11y-nomotion body *,
+html.a11y-nomotion body *::before,
+html.a11y-nomotion body *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* a bigger pointer, which has to beat this site's own reticle */
+html.a11y-cursor body,
+html.a11y-cursor body * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M7 3l30 19-13 2.5L31 40l-6 3-7-15.5L7 35z' fill='%23ffffff' stroke='%23000000' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      5 3,
+    auto !important;
+}
+
+html.a11y-cursor body :is(a, button, [role="button"], summary),
+html.a11y-cursor body :is(a, button, [role="button"], summary) * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M15 4c2 0 3 1.4 3 3v14h2v-3c0-1.7 1.3-3 3-3s3 1.3 3 3v3h2v-2c0-1.7 1.3-3 3-3s3 1.3 3 3v2h2c1.7 0 3 1.3 3 3v8c0 6-4 11-10 11h-6c-6 0-10-5-10-11V7c0-1.6 1-3 3-3z' fill='%23ffffff' stroke='%23000000' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      14 4,
+    pointer !important;
+}
+
+html.a11y-cursor-hc body,
+html.a11y-cursor-hc body * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M7 3l30 19-13 2.5L31 40l-6 3-7-15.5L7 35z' fill='%23ffe400' stroke='%23000000' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E")
+      5 3,
+    auto !important;
+}
+
+/* the reading guide */
+.a11y-mask {
+  position: fixed;
+  inset-inline: 0;
+  height: 132px;
+  z-index: 2147482000;
+  pointer-events: none;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.72);
+  border-block: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 600px) {
+  .a11y-mask {
+    height: 108px;
+  }
+}

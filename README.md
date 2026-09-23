@@ -43,6 +43,7 @@ moved.
 | `lang.js` | Hebrew and English, switched in place. |
 | `logo.svg` | The mark. Also the favicon. |
 | `banner.svg` | The lockup at the top of this file. |
+| `a11y.css` / `a11y.js` | The accessibility widget. Self-contained; see below. |
 | `frames/` | 1,175 frames at 1344×768, the originals. Not modified. |
 | `frames-mobile/` | The same film cropped to portrait at 432×768, for phones. |
 
@@ -74,6 +75,30 @@ so the parts that were merely expensive were removed rather than tuned:
 
 `window.__film` exposes `{ requested, painted, shown, cached }`, which is the
 only honest way to tell whether the thing is a film or a slideshow.
+
+## The accessibility widget
+
+A floating button in the bottom-right corner opens a panel with text scaling
+(100/110/120/130%), text spacing, high contrast, invert, grayscale, link and
+heading highlighting, a readable font, a large pointer, motion off, larger
+click areas and a reading guide, plus an accessibility statement and a reset.
+Everything is stored in `localStorage` and restored on the next visit.
+
+It is a drop-in: link `a11y.css` in the head, put `a11y.js` before `</body>`,
+and it builds its own markup. To reuse it elsewhere, edit the `CONTACT` block
+at the top of `a11y.js` and nothing else. Every class is prefixed `a11y-` and
+nothing targets the host page's selectors.
+
+One thing in it is worth knowing about. The colour effects are painted with
+`backdrop-filter` on a fixed overlay rather than with `filter` on an ancestor,
+because a filter on an ancestor makes `position: fixed` resolve against that
+ancestor instead of the viewport. Measured here: `filter` on `<body>` dropped
+the fixed masthead 1,600px out of view the moment grayscale was switched on.
+The overlay also sits below the widget, so the widget never filters itself.
+
+Text scaling is the other risk on a layout built from `clamp()` and viewport
+units, so it is checked at 130% at every width in both languages; there is no
+overflow.
 
 ## The mark
 

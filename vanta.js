@@ -96,3 +96,101 @@ if (notice && enter) {
     else notice.removeAttribute("open");
   }
 }
+
+/* --- the reticle ----------------------------------------------------------
+   An element rather than a cursor image, because a cursor image is one bitmap
+   the compositor draws and can never react to what is underneath it. This one
+   opens up over headings and turns amber over anything that can be clicked.
+
+   It costs nothing while the film is scrubbing: the loop only runs while the
+   reticle is still catching up with the pointer, and it writes one transform
+   per frame and nothing else. A scroll does not move the pointer, so during a
+   scrub the loop is asleep. */
+
+const FINE = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+if (FINE.matches) {
+  const el = document.createElement("div");
+  el.className = "reticle";
+  el.setAttribute("aria-hidden", "true");
+  el.innerHTML =
+    '<svg viewBox="0 0 100 100">' +
+    '<circle class="reticle__ring" cx="50" cy="50" r="15"/>' +
+    '<g transform="rotate(0 50 50)"><line class="reticle__tick" x1="50" y1="23" x2="50" y2="29"/></g>' +
+    '<g transform="rotate(90 50 50)"><line class="reticle__tick" x1="50" y1="23" x2="50" y2="29"/></g>' +
+    '<g transform="rotate(180 50 50)"><line class="reticle__tick" x1="50" y1="23" x2="50" y2="29"/></g>' +
+    '<g transform="rotate(270 50 50)"><line class="reticle__tick" x1="50" y1="23" x2="50" y2="29"/></g>' +
+    '<circle class="reticle__dot" cx="50" cy="50" r="1.5"/>' +
+    "</svg>";
+  document.body.appendChild(el);
+  document.documentElement.classList.add("has-reticle");
+
+  const slow = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const LINK = "a, button, [role=\"button\"], summary, input, label";
+  const READ = "h1, h2, h3, .display, .heading, .beat__text, .cap__name, " +
+    ".map__step, .proof__item, .versus__side li, figure, img";
+
+  let tx = -100;
+  let ty = -100;
+  let x = tx;
+  let y = ty;
+  let running = false;
+
+  function tick() {
+    /* a little lag, so it reads as weighted rather than glued to the mouse */
+    const k = slow ? 1 : 0.22;
+    x += (tx - x) * k;
+    y += (ty - y) * k;
+    el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+    if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1) {
+      x = tx;
+      y = ty;
+      el.style.transform = "translate3d(" + x + "px," + y + "px,0)";
+      running = false;
+      return;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function wake() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType !== "mouse") return;
+      tx = event.clientX;
+      ty = event.clientY;
+      el.dataset.live = "true";
+      wake();
+    },
+    { passive: true }
+  );
+
+  /* delegation rather than elementFromPoint on every move: one closest() call
+     when the pointer crosses into a new element, and nothing in between */
+  document.addEventListener(
+    "pointerover",
+    (event) => {
+      const target = event.target;
+      if (!target || !target.closest) return;
+      if (target.closest(".a11y-root")) {
+        el.dataset.live = "false";
+        return;
+      }
+      el.dataset.live = "true";
+      el.dataset.state = target.closest(LINK)
+        ? "link"
+        : target.closest(READ)
+        ? "read"
+        : "";
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("pointerleave", () => (el.dataset.live = "false"));
+  window.addEventListener("blur", () => (el.dataset.live = "false"));
+}
