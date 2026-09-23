@@ -26,6 +26,8 @@
   }
 
   function apply(lang) {
+    /* the tab's title carries data-en too, and it is in <head>, so the query
+       has to run over the document rather than the body */
     var nodes = document.querySelectorAll("[data-en]");
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
