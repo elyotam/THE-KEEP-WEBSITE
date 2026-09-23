@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NIGHTGLASS · אופטיקה לראיית לילה</title>
+    <meta
+      name="description"
+      content="NIGHTGLASS — מגברי אור ומצלמות תרמיות. אתר הדגמה."
+    />
+    <meta name="theme-color" content="#07100a" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2307100a'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%2337f07a' stroke-width='2.5'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="./night.css?v=1" />
+  </head>
+  <body>
+    <a class="skip" href="#main" data-en="Skip to content">דילוג לתוכן</a>
+
+    <header>
+      <a class="logo" href="#top"><b>NIGHTGLASS</b><span>optics</span></a>
+      <nav aria-label="ניווט ראשי">
+        <a href="#compare" data-en="The difference">ההבדל</a>
+        <a href="#models" data-en="Models">דגמים</a>
+        <a href="#numbers" data-en="Numbers">מספרים</a>
+        <a href="#bench" data-en="How it is built">איך נבנה</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="he" aria-pressed="true">HE</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="buy" href="./contact.html" data-en="Talk to us">לדבר איתנו</a>
+    </header>
+
+    <main id="main">
+      <section
+        class="film"
+        id="top"
+        data-film
+        data-screens="4"
+        data-baked="frames-nv-mobile"
+        data-tint="0,3,1|6,40,16|18,108,44|54,190,96|150,245,170|226,255,232"
+        aria-label="הסרט"
+      >
+        <div class="film-copy" data-intro>
+          <h1>
+            <span data-en="You cannot see in the dark.">אתה לא רואה בחושך.</span>
+            <em data-en="We can.">אנחנו כן.</em>
+          </h1>
+          <p data-en="Image intensifiers and thermal cameras. Built, calibrated and tested by hand, one at a time.">
+            מגברי אור ומצלמות תרמיות. מיוצרים, מכוילים ונבדקים ביד, אחד־אחד.
+          </p>
+          <span class="scroll-hint" data-en="the film runs as you scroll">הסרט רץ עם הגלילה</span>
+        </div>
+
+        <div data-cap data-at="0.16" data-hold="0.09">
+          <i data-en="Gen 3">דור שלישי</i>
+          <b data-en="Starlight is enough">אור כוכבים מספיק</b>
+          <span data-en="No infrared illuminator, no moon. Only what the sky already gives you.">
+            בלי מאיר אינפרא־אדום, בלי ירח. רק מה שיש בשמיים.
+          </span>
+        </div>
+        <div data-cap data-at="0.38" data-hold="0.09">
+          <i data-en="Thermal">תרמי</i>
+          <b data-en="Heat does not hide">חום לא מתחבא</b>
+          <span data-en="A body through smoke, through rain, through absolute dark.">
+            גוף אדם דרך עשן, דרך גשם, דרך חושך מוחלט.
+          </span>
+        </div>
+        <div data-cap data-at="0.60" data-hold="0.09">
+          <i data-en="Detection range">טווח זיהוי</i>
+          <b data-en="1,200 metres">1,200 מטר</b>
+          <span data-en="Positive identification of a person in open ground, on a moonless night.">
+            זיהוי ודאי של אדם בשדה פתוח, בלילה נטול ירח.
+          </span>
+        </div>
+        <div data-cap data-at="0.84" data-hold="0.09">
+          <i data-en="Durability">עמידות</i>
+          <b data-en="Built to take it">נבנה לספוג</b>
+          <span data-en="A two metre drop, full immersion, forty below.">
+            נפילה משני מטר, טבילה במים, ארבעים מעלות מתחת לאפס.
+          </span>
+        </div>
+      </section>
+
+      <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+        <filter id="tube-still" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            result="mono"
+            values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0
+                    0.2126 0.7152 0.0722 0 0 0 0 0 1 0"
+          />
+          <feComponentTransfer in="mono">
+            <feFuncR type="table" tableValues="0 0.024 0.071 0.212 0.588 0.886" />
+            <feFuncG type="table" tableValues="0.012 0.157 0.424 0.745 0.961 1" />
+            <feFuncB type="table" tableValues="0.004 0.063 0.173 0.376 0.667 0.910" />
+          </feComponentTransfer>
+        </filter>
+      </svg>
+
+      <section class="compare wrap" id="compare">
+        <div class="compare-head">
+          <h2>
+            <span data-en="The same moment.">אותו רגע.</span><br />
+            <span data-en="Two different eyes.">שתי עיניים שונות.</span>
+          </h2>
+          <p data-en="Drag the handle. One side is what the eye sees, the other is what the device sees — same second, same place, no added light.">
+            גרור את הידית. צד אחד הוא מה שהעין רואה, השני הוא מה שהמכשיר רואה — אותה שנייה
+            בדיוק, אותו מקום, אפס תאורה נוספת.
+          </p>
+        </div>
+        <figure class="slab" id="slab" role="group" aria-label="השוואה בין העין למכשיר">
+          <img src="./frames/frame_0132.webp" alt="הסצנה כפי שהעין רואה אותה"
+               width="1344" height="768" />
+          <img class="after" src="./frames/frame_0132.webp" alt="אותה סצנה דרך מגבר אור"
+               width="1344" height="768" />
+          <div class="handle" aria-hidden="true"></div>
+          <input class="range" type="range" min="0" max="100" value="50"
+                 aria-label="מיקום ההשוואה" />
+          <figcaption class="tag-a mono" data-en="the eye">העין</figcaption>
+          <figcaption class="tag-b mono">NG-3</figcaption>
+        </figure>
+      </section>
+
+      <section class="models wrap" id="models">
+        <span class="eyebrow">catalogue</span>
+        <h2 class="sec-title" data-en="Four devices.">ארבעה דגמים.</h2>
+        <div class="model-grid">
+          <article class="model">
+            <h3>NG-1</h3>
+            <span class="kind" data-en="monocular · pocket">חד־עיני · כיס</span>
+            <dl>
+              <dt data-en="Generation">דור</dt><dd>2+</dd>
+              <dt data-en="Detection">טווח זיהוי</dt><dd><span data-en="320 m">320 מ׳</span></dd>
+              <dt data-en="Weight">משקל</dt><dd><span data-en="190 g">190 גר׳</span></dd>
+              <dt data-en="Battery">סוללה</dt><dd><span data-en="18 h">18 שע׳</span></dd>
+            </dl>
+            <div class="price"><b>₪3,400</b><a href="./contact.html" data-en="Details">לפרטים</a></div>
+          </article>
+          <article class="model featured">
+            <span class="flag" data-en="most chosen">הכי נבחר</span>
+            <h3>NG-3</h3>
+            <span class="kind" data-en="monocular · helmet">חד־עיני · קסדה</span>
+            <dl>
+              <dt data-en="Generation">דור</dt><dd>3</dd>
+              <dt data-en="Detection">טווח זיהוי</dt><dd><span data-en="1,200 m">1,200 מ׳</span></dd>
+              <dt data-en="Weight">משקל</dt><dd><span data-en="310 g">310 גר׳</span></dd>
+              <dt data-en="Battery">סוללה</dt><dd><span data-en="40 h">40 שע׳</span></dd>
+            </dl>
+            <div class="price"><b>₪11,900</b><a href="./contact.html" data-en="Details">לפרטים</a></div>
+          </article>
+          <article class="model">
+            <h3>NG-3B</h3>
+            <span class="kind" data-en="binocular · helmet">דו־עיני · קסדה</span>
+            <dl>
+              <dt data-en="Generation">דור</dt><dd>3</dd>
+              <dt data-en="Field of view">שדה ראייה</dt><dd>40°</dd>
+              <dt data-en="Weight">משקל</dt><dd><span data-en="540 g">540 גר׳</span></dd>
+              <dt data-en="Battery">סוללה</dt><dd><span data-en="32 h">32 שע׳</span></dd>
+            </dl>
+            <div class="price"><b>₪19,400</b><a href="./contact.html" data-en="Details">לפרטים</a></div>
+          </article>
+          <article class="model">
+            <h3>NG-T</h3>
+            <span class="kind" data-en="thermal · handheld">תרמי · ידני</span>
+            <dl>
+              <dt data-en="Sensor">חיישן</dt><dd>640×480</dd>
+              <dt data-en="Detection">טווח זיהוי</dt><dd><span data-en="1,800 m">1,800 מ׳</span></dd>
+              <dt data-en="Weight">משקל</dt><dd><span data-en="420 g">420 גר׳</span></dd>
+              <dt data-en="Battery">סוללה</dt><dd><span data-en="9 h">9 שע׳</span></dd>
+            </dl>
+            <div class="price"><b>₪16,200</b><a href="./contact.html" data-en="Details">לפרטים</a></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="figures wrap" id="numbers">
+        <span class="eyebrow">by the numbers</span>
+        <div class="figure-row">
+          <div class="figure">
+            <b>1,200</b><span data-en="metres to identify a person on a moonless night">מטר לזיהוי אדם בלילה נטול ירח</span>
+          </div>
+          <div class="figure">
+            <b>40</b><span data-en="hours on a single battery">שעות על סוללה אחת</span>
+          </div>
+          <div class="figure">
+            <b>−40°</b><span data-en="the temperature it still works at">הטמפרטורה שבה הוא עדיין עובד</span>
+          </div>
+          <div class="figure">
+            <b>7</b><span data-en="years of full warranty">שנות אחריות מלאה</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="bench wrap" id="bench">
+        <span class="eyebrow">on the bench</span>
+        <h2 class="sec-title" data-en="Every unit crosses four benches.">כל יחידה עוברת ארבעה שולחנות.</h2>
+        <ol class="steps">
+          <li class="step">
+            <h3 data-en="Choosing the tube">בחירת מגבר</h3>
+            <p data-en="Every intensifier is measured on its own. Anything under our signal-to-noise figure never enters the building.">
+              כל מגבר נמדד בנפרד. מי שלא עומד ביחס אות־רעש שלנו לא נכנס לבית.
+            </p>
+          </li>
+          <li class="step">
+            <h3 data-en="Assembly">הרכבה</h3>
+            <p data-en="Optics, tube and housing go together in a clean room, with a serial number that stays with you.">
+              אופטיקה, מגבר וגוף מורכבים בחדר נקי, עם מספר סידורי שנשאר איתך.
+            </p>
+          </li>
+          <li class="step">
+            <h3 data-en="Calibration">כיול</h3>
+            <p data-en="Focus, brightness and automatic gain are set against a measurement chart, not against somebody's eye.">
+              מיקוד, בהירות והגבר אוטומטי מכוילים מול לוח מדידה, לא מול העין.
+            </p>
+          </li>
+          <li class="step">
+            <h3 data-en="Field test">בדיקת שטח</h3>
+            <p data-en="A real night, a real field. Anything that fails goes back to the first bench.">
+              לילה אמיתי, שדה אמיתי. מי שלא עבר חוזר לשולחן הראשון.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="close wrap">
+        <h2>
+          <span data-en="In the dark,">בחושך,</span>
+          <em data-en="the difference is who sees first.">ההבדל הוא מי רואה ראשון.</em>
+        </h2>
+        <div class="row">
+          <a class="btn btn-a" href="./contact.html" data-en="Talk to a specialist">לדבר עם מומחה</a>
+          <a class="btn btn-b" href="https://wa.me/972000000000" data-en="WhatsApp">וואטסאפ</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <div class="foot-row">
+        <span>© 2026 NIGHTGLASS OPTICS</span>
+        <span class="foot-links">
+          <a href="https://instagram.com/" data-en="Instagram">אינסטגרם</a> ·
+          <a href="https://facebook.com/" data-en="Facebook">פייסבוק</a> ·
+          <a href="mailto:hello@example.com">hello@example.com</a>
+        </span>
+      </div>
+      <p class="demo-note" data-en="A demonstration site, built as a portfolio piece. The company, the devices and the prices on it are invented, and none of the outgoing links work.">
+        אתר הדגמה שנבנה לתיק עבודות. החברה, המכשירים והמחירים שבו בדויים,
+        ואף קישור יוצא בו אינו פעיל.
+      </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="./lang.js?v=1"></script>
+    <script type="module">
+      import { mountFilm, sealLinks } from "./film.js?v=3";
+
+      mountFilm(document.querySelector("[data-film]"), { strength: 0.92 });
+      sealLinks("#37f07a", "#07100a");
+
+      /* The comparison. A pointer drag is the obvious way to use it, but it is
+         also a range input underneath - which is what makes it reachable from a
+         keyboard and announced by a screen reader. Both write to one property. */
+      const slab = document.getElementById("slab");
+      const range = slab.querySelector(".range");
+      const set = (p) => {
+        const v = Math.min(100, Math.max(0, p));
+        slab.style.setProperty("--split", v.toFixed(1) + "%");
+        if (Number(range.value) !== Math.round(v)) range.value = String(Math.round(v));
+      };
+      const fromX = (clientX) => {
+        const r = slab.getBoundingClientRect();
+        set(((clientX - r.left) / r.width) * 100);
+      };
+      let dragging = false;
+      slab.addEventListener("pointerdown", (e) => {
+        if (e.target === range) return;
+        dragging = true;
+        slab.setPointerCapture(e.pointerId);
+        fromX(e.clientX);
+      });
+      slab.addEventListener("pointermove", (e) => dragging && fromX(e.clientX));
+      slab.addEventListener("pointerup", () => (dragging = false));
+      slab.addEventListener("pointercancel", () => (dragging = false));
+      range.addEventListener("input", () => set(Number(range.value)));
+      set(50);
+    </script>
+  </body>
+</html>
