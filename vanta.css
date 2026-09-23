@@ -110,7 +110,7 @@ a {
 .skip {
   position: absolute;
   top: -100%;
-  left: 0;
+  inset-inline-start: 0;
   z-index: 200;
   padding: 0.7rem 1.2rem;
   background: var(--paper);
@@ -226,23 +226,62 @@ a {
   color: var(--paper);
 }
 
+/* nav, tagline and the language button travel together at the far end */
+.masthead__end {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 2.4vw, 2rem);
+  margin-inline-start: auto;
+}
+
+.masthead__tag {
+  display: none;
+  font-family: var(--mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* The one control on the page that is not the film. It is a button, not a pair
+   of links, because there are exactly two languages and it always shows the
+   one you would be going to. */
+.lang {
+  flex: none;
+  min-width: 2.6rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line-2);
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-align: center;
+  transition: background 0.25s var(--ease), color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+
+.lang:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
 @media (max-width: 860px) {
   .masthead nav {
     display: none;
   }
-  .masthead::after {
-    content: "WHAT IS LEARNED HERE IS KEPT";
-    margin-inline-start: auto;
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.16em;
-    color: var(--faint);
+  .masthead__tag {
+    display: block;
   }
 }
 
-@media (max-width: 430px) {
-  .masthead::after {
-    content: "LEARNED HERE, KEPT HERE";
+@media (max-width: 480px) {
+  /* at this width the wordmark and the button are the whole bar */
+  .masthead__tag {
+    display: none;
   }
 }
 
@@ -298,7 +337,9 @@ a {
 .boot__bar::after {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
   width: calc(var(--p, 0) * 100%);
   background: var(--amber);
   transition: width 0.3s linear;
@@ -362,7 +403,9 @@ a {
 .film-progress::after {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
   width: calc(var(--progress, 0) * 100%);
   background: var(--amber);
 }
@@ -401,7 +444,9 @@ a {
 }
 
 .intro__scroll {
-  color: var(--steel);
+  /* --steel measured 4.20:1 here in Hebrew at phone width, just under AA; this
+     is a step brighter and still clearly the quietest line in the block */
+  color: #c6cbce;
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
@@ -458,15 +503,32 @@ a {
   );
 }
 
+/* This label was amber, and over a mid-grey frame it measured 2.65:1 at
+   11.8px - which no amber can fix: reaching 4.5:1 against that ground would
+   take a colour near white. So the words go light and the accent becomes a
+   rule, which is a solid block of colour rather than eleven-pixel strokes and
+   therefore actually survives being put over a photograph. The page already
+   uses exactly this device in the comparison list. */
 .beat__num {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
   margin-bottom: 0.9rem;
   font-family: var(--mono);
   font-size: clamp(0.66rem, 0.63rem + 0.12vw, 0.75rem);
   font-weight: 500;
   letter-spacing: 0.22em;
-  color: var(--amber-lift);
-  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.95);
+  color: var(--paper);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 1px 14px rgba(0, 0, 0, 0.92);
+}
+
+.beat__num::before {
+  content: "";
+  flex: none;
+  width: clamp(1.1rem, 2.5vw, 1.7rem);
+  height: 2px;
+  background: var(--amber-lift);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.85);
 }
 
 .beat__text {
@@ -673,6 +735,11 @@ a {
   border-right: 1px solid var(--amber);
   transform: translateY(-50%) rotate(45deg);
   background: var(--ink);
+}
+
+/* in Hebrew the row reads the other way, so the arrow has to as well */
+html[dir="rtl"] .map__step::after {
+  transform: translateY(-50%) rotate(-135deg);
 }
 
 /* the last step is where the flow ends, so it has nothing after it */
@@ -1074,4 +1141,99 @@ a {
 
 .notice__x:hover {
   color: var(--paper);
+}
+
+/* =========================================================================
+   HEBREW
+
+   The page defaults to Hebrew. Heebo carries the Hebrew glyphs and Inter Tight
+   the Latin ones, so a line with a brand name in it renders in both without
+   being marked up for it — the browser falls back per glyph.
+
+   Hebrew does not take the tracking a Latin grotesk wants. Tight negative
+   tracking smears the letterforms together, and the wide tracking that makes a
+   small caps label look deliberate in English just breaks a Hebrew word apart.
+   So both are neutralised, and only the Latin wordmark keeps its spacing.
+   ========================================================================= */
+
+html[lang="he"] {
+  --sans: "Inter Tight", Heebo, "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Heebo, ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html[lang="he"] .display,
+html[lang="he"] .heading,
+html[lang="he"] .beat__text,
+html[lang="he"] .map__step b,
+html[lang="he"] .proof__item b,
+html[lang="he"] .spec h3,
+html[lang="he"] .versus__side li,
+html[lang="he"] .notice__card h2 {
+  letter-spacing: normal;
+}
+
+html[lang="he"] .label,
+html[lang="he"] .beat__num,
+html[lang="he"] .meta li,
+html[lang="he"] .cap__name b,
+html[lang="he"] .masthead nav a,
+html[lang="he"] .cap__figure figcaption,
+html[lang="he"] .colophon p,
+html[lang="he"] .enter,
+html[lang="he"] .notice__close {
+  letter-spacing: 0.05em;
+}
+
+/* the mark stays Latin in both languages, and keeps its own spacing */
+html[lang="he"] .wordmark,
+html[lang="he"] .boot__mark {
+  letter-spacing: 0.34em;
+}
+
+html[lang="he"] .boot__mark {
+  letter-spacing: 0.4em;
+}
+
+/* Hebrew sets a little taller than the Latin at the same size */
+html[lang="he"] .display {
+  line-height: 1.06;
+}
+
+html[lang="he"] .heading {
+  line-height: 1.16;
+}
+
+html[lang="he"] .beat__text {
+  line-height: 1.24;
+}
+
+/* =========================================================================
+   THE POINTER
+
+   A ring with a centre dot rather than an arrow: it reads as an instrument
+   sight without being a crosshair, it survives being dragged across bright
+   footage because it carries its own dark halo, and it turns amber over the
+   things that can be clicked.
+
+   Only where there is a real pointer. A touch screen has no cursor, and
+   declaring one there does nothing but risk a stray rule.
+   ========================================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+  body,
+  .film,
+  .notice {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='11' cy='11' r='7.5' fill='none' stroke='rgba(0,0,0,0.55)' stroke-width='3'/%3E%3Ccircle cx='11' cy='11' r='7.5' fill='none' stroke='%23f0ede8' stroke-width='1'/%3E%3Ccircle cx='11' cy='11' r='1.1' fill='%23f0ede8'/%3E%3C/svg%3E")
+        11 11,
+      default;
+  }
+
+  a,
+  button,
+  summary,
+  [role="button"] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='11' cy='11' r='8.5' fill='none' stroke='rgba(0,0,0,0.5)' stroke-width='3'/%3E%3Ccircle cx='11' cy='11' r='8.5' fill='%23e0873a' fill-opacity='0.2' stroke='%23e0873a' stroke-width='1.4'/%3E%3Ccircle cx='11' cy='11' r='1.6' fill='%23e0873a'/%3E%3C/svg%3E")
+        11 11,
+      pointer;
+  }
 }

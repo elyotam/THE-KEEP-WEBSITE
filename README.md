@@ -6,7 +6,9 @@ A single-page brand experience for a fictional operational training school,
 built as a portfolio demonstration. The school does not exist; the institution,
 the courses and every line of copy were written for this page.
 
-Live: https://elyotam.github.io/nightglass-website/
+The page is in Hebrew by default and switches to English from the masthead.
+
+Live: https://elyotam.github.io/the-keep-website/
 
 ---
 
@@ -33,6 +35,7 @@ The two `vanta.*` filenames are from an earlier version of this page and were
 deliberately left alone when the copy changed, so that nothing but the words
 moved.
 | `film.js` | The frame player. The interesting file — see below. |
+| `lang.js` | Hebrew and English, switched in place. |
 | `frames/` | 1,175 frames at 1344×768, the originals. Not modified. |
 | `frames-mobile/` | The same film cropped to portrait at 432×768, for phones. |
 
@@ -65,6 +68,23 @@ so the parts that were merely expensive were removed rather than tuned:
 `window.__film` exposes `{ requested, painted, shown, cached }`, which is the
 only honest way to tell whether the thing is a film or a slideshow.
 
+## Hebrew and English
+
+Hebrew is the page. English lives in `data-en` attributes on the element that
+owns the sentence — so a translation cannot drift away from the line it
+translates, because the two are the same element. There is no dictionary file
+to keep in step, and nothing can be missed or translated twice. `lang.js`
+handles four attributes (`data-en`, `data-en-alt`, `data-en-aria`,
+`data-en-content`), which covers everything including the `<title>`.
+
+The choice is stored, and an inline script in the head applies it before the
+first paint, so a returning visitor never sees a frame of the wrong language.
+`?lang=he` and `?lang=en` override it.
+
+The layout was written with logical properties, so Hebrew needed only five
+declarations changed — the two progress bars, the skip link, and the direction
+of the flow arrow in the process row.
+
 ## Preview
 
 Any static server, from the repository root:
@@ -83,9 +103,13 @@ Checked with Playwright at 1440, 1024, 768, 390 and 320:
 - no horizontal overflow, no console errors, nothing 404ing
 - every run of text on the flat sections clears WCAG AA against what is painted
   behind it
-- the narration over the footage is measured from **rendered pixels**, because
-  there is no background colour to check against — there is a picture. The
-  lowest line clears 5.9:1
+- the narration over the footage is measured by photographing each line, then
+  hiding that one element and photographing the same rectangle again: the
+  pixels that changed are the letters, and nothing else is. Ink is the glyph
+  cores; ground is the ring just outside them. Every percentile shortcut tried
+  before this was wrong in both directions — it called a readable label 1.74:1
+  because the element's box was mostly bare photograph, and then called
+  readable lines 2.3:1 because a light fitting sat inside the crop
 - the film scrubs, measured on the live site with a software GPU, at 60fps
   unthrottled (119 of 119 frames reaching the screen), 52fps at a 6× CPU
   throttle (116 frames) and 47fps at a brutal 10× throttle (111 frames)
