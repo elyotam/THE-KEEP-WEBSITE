@@ -1,54 +1,57 @@
 /* ---------------------------------------------------------------------------
    THE FILM
 
-   A frame sequence scrubbed by the scroll. This is the second design of it; the
-   first was smooth on every machine available here and stuck on a real phone,
-   so the parts that were merely expensive have been taken out rather than tuned:
+   A 1,175-frame sequence scrubbed by the scroll, in its original colour. The
+   footage is the whole argument of this page, so nothing here tints, grades or
+   overlays it — the only job is to put the right frame on the screen at the
+   right moment, on a phone as well as on a desktop.
+
+   The architecture below is the second design of it. The first was smooth on
+   every machine available here and stuck on a real phone, so the parts that
+   were merely expensive were removed rather than tuned:
 
    NO PINNING, NO SCROLL LIBRARY. The stage is `position: sticky`, which the
    compositor handles, instead of a pinned element with a spacer that has to be
    measured and re-measured. On a phone the URL bar alone changes the viewport
-   height constantly, and every one of those changes used to cost a full
+   height constantly, and every one of those changes used to cost a full layout
    recalculation. Nothing here reads layout during a scroll.
 
-   A PHONE PLAYS A SHORTER FILM, AND HOLDS ALL OF IT DECODED. The film is 1,175
-   frames. Chasing them while somebody scrolls does not work - measured over a
-   real scroll the loader fell so far behind that eleven distinct frames reached
-   the screen, which is not a film, it is a stutter. Fetching them all up front
-   fixed the network but not the decode: a fast scrub still outran it, and four
-   frames reached the screen on a slow processor.
+   A PHONE PLAYS A SHORTER FILM, AND HOLDS ALL OF IT DECODED. Chasing 1,175
+   frames while somebody scrolls does not work — measured over a real scroll the
+   loader fell so far behind that eleven distinct frames reached the screen,
+   which is not a film, it is a stutter. Fetching them all up front fixed the
+   network but not the decode: a fast scrub still outran it.
 
-   So on a phone every frame is decoded once, before it is needed, at a size the
-   phone will actually draw, and then kept. 118 frames at 320px wide is about
-   86MB of bitmaps and roughly 2MB over the wire. After that a scrub costs one
-   drawImage and nothing else - no fetch, no decode, at any speed.
+   So on a phone every tenth frame is fetched and decoded once, before it is
+   needed, at the size the phone will actually draw, and then kept. That is 118
+   frames at 320px wide — about 2MB over the wire — after which a scrub costs
+   one drawImage and nothing else, at any speed. A desktop streams a bounded
+   window instead, because 1,175 full-size frames are far too heavy to hold.
 
    DECODED OFF THE MAIN THREAD. Frames become ImageBitmaps rather than <img>
    elements, so the decode happens on a worker thread and the draw is a straight
-   upload. Bitmaps are closed when they leave the cache, because unlike images
-   they do not get collected on their own.
+   texture upload. Bitmaps are closed on eviction, because unlike images they do
+   not get collected on their own.
 
-   AND IT ONLY DRAWS WHEN THE PICTURE CHANGES. The scroll handler sets a target
+   AND IT ONLY DRAWS WHEN THE PICTURE CHANGES. The scroll handler sets a flag
    and returns; one animation frame later, if the frame index actually moved,
-   one drawImage happens. A fast scroll that crosses forty frames costs forty
-   draws, not four hundred.
+   one drawImage happens.
 --------------------------------------------------------------------------- */
 
 const FRAMES = 1175;
 
 export function mountFilm(root, options = {}) {
-  const phone = window.matchMedia("(max-width: 768px)").matches;
+  const phone = window.matchMedia("(max-width: 860px)").matches;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const screens = Number(root.dataset.screens || 4);
+  const screens = Number(root.dataset.screens || 5);
 
-  /* Every tenth frame on a phone, all of them on a desktop. A phone that says
-     it has little memory gets a shorter film and smaller frames, because the
-     whole point is to hold all of them at once. */
+  /* Every tenth frame on a phone, all of them on a desktop. A phone that
+     reports little memory gets a shorter film and smaller frames, because the
+     whole point is to hold every frame it will need at once. */
   const thin = phone && (navigator.deviceMemory || 4) < 4;
   const step = phone ? (thin ? 14 : 10) : 1;
   const decodeWidth = phone ? (thin ? 280 : 320) : 0;
-  const folder = phone ? root.dataset.baked || "frames-mobile" : "frames";
-  const usingBaked = phone && Boolean(root.dataset.baked);
+  const folder = phone ? "frames-mobile" : "frames";
 
   /* ---------- the stage: sticky, not pinned ---------- */
   const stage = document.createElement("div");
@@ -56,62 +59,35 @@ export function mountFilm(root, options = {}) {
   while (root.firstChild) stage.appendChild(root.firstChild);
   const canvas = document.createElement("canvas");
   canvas.className = "film-canvas";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute(
+    "aria-label",
+    root.dataset.alt || "Aerial and ground footage playing as the page is scrolled"
+  );
   stage.prepend(canvas);
   root.appendChild(stage);
   root.style.setProperty("--screens", String(screens));
 
   const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
 
-  /* ---------- the phosphor curve, unless the frames already carry it ---------- */
-  const tint = usingBaked ? null : root.dataset.tint;
-  if (tint) {
-    const stops = tint.split("|").map((s) => s.split(",").map(Number));
-    const table = (i) => stops.map((c) => (c[i] / 255).toFixed(4)).join(" ");
-    const id = "film-tube";
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("aria-hidden", "true");
-    svg.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
-    svg.innerHTML = `<filter id="${id}" color-interpolation-filters="sRGB">
-      <feColorMatrix type="matrix" result="mono"
-        values="0.2126 0.7152 0.0722 0 0
-                0.2126 0.7152 0.0722 0 0
-                0.2126 0.7152 0.0722 0 0
-                0 0 0 1 0"/>
-      <feComponentTransfer in="mono" result="curved">
-        <feFuncR type="gamma" amplitude="1" exponent="1.2" offset="-0.02"/>
-        <feFuncG type="gamma" amplitude="1" exponent="1.2" offset="-0.02"/>
-        <feFuncB type="gamma" amplitude="1" exponent="1.2" offset="-0.02"/>
-      </feComponentTransfer>
-      <feComponentTransfer in="curved" result="phos">
-        <feFuncR type="table" tableValues="${table(0)}"/>
-        <feFuncG type="table" tableValues="${table(1)}"/>
-        <feFuncB type="table" tableValues="${table(2)}"/>
-      </feComponentTransfer>
-      <feComposite in="phos" in2="SourceGraphic" operator="arithmetic"
-                   k1="0" k2="${options.strength || 0.9}"
-                   k3="${(1 - (options.strength || 0.9)).toFixed(2)}" k4="0"/>
-    </filter>`;
-    document.body.appendChild(svg);
-    canvas.style.filter = `url(#${id})`;
-  }
-
   /* ---------- the frames ---------- */
-  const cache = new Map();      /* decoded, ready to draw */
-  const blobs = new Map();      /* compressed, ~18KB each, cheap to keep */
+  const cache = new Map(); /* decoded and ready to draw */
+  const blobs = new Map(); /* compressed, ~18KB each, cheap to keep */
   const pending = new Set();
-  /* A decoded 432x768 frame is about 1.3MB, so sixty of them is roughly 80MB -
-     the most worth asking a phone for. The window is biased forward because
-     that is the direction people scroll. */
-  /* on a phone the cache is the whole film, so nothing is ever evicted mid-scrub */
+  /* On a phone the cache is the whole film, so nothing is evicted mid-scrub.
+     On a desktop a decoded full-size frame is several megabytes, so the window
+     is held near ninety and biased forward, because that is the direction
+     people scroll. */
   const CAP = phone ? Math.ceil(FRAMES / step) + 4 : 90;
   const AHEAD = phone ? 22 : 20;
   const BEHIND = phone ? 6 : 8;
-  const INFLIGHT = phone ? 6 : 6;
+  const INFLIGHT = 6;
   let inflight = 0;
   let playhead = 0;
 
   const snap = (i) => Math.min(FRAMES - 1, Math.max(0, Math.round(i / step) * step));
-  const url = (i) => `./${folder}/frame_${String(i + 1).padStart(4, "0")}.webp`;
+  const pad = (i) => String(i + 1).padStart(4, "0");
+  const url = (i) => "./" + folder + "/frame_" + pad(i) + ".webp";
 
   const supportsBitmap = typeof createImageBitmap === "function";
 
@@ -131,11 +107,15 @@ export function mountFilm(root, options = {}) {
          the full frame, and the smaller bitmap is what makes holding the whole
          film affordable */
       const opts = decodeWidth
-        ? { resizeWidth: decodeWidth, resizeHeight: Math.round(decodeWidth * 16 / 9), resizeQuality: "medium" }
+        ? {
+            resizeWidth: decodeWidth,
+            resizeHeight: Math.round((decodeWidth * 16) / 9),
+            resizeQuality: "medium",
+          }
         : undefined;
-      createImageBitmap(blob, opts).then(settle).catch(() =>
-        createImageBitmap(blob).then(settle).catch(() => settle(null))
-      );
+      createImageBitmap(blob, opts)
+        .then(settle)
+        .catch(() => createImageBitmap(blob).then(settle).catch(() => settle(null)));
     } else {
       const img = new Image();
       img.decoding = "async";
@@ -151,7 +131,7 @@ export function mountFilm(root, options = {}) {
     inflight++;
     stats.requested++;
     fetch(url(i))
-      .then((r) => (r.ok ? r.blob() : Promise.reject()))
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
       .then((blob) => {
         blobs.set(i, blob);
         pending.delete(i);
@@ -168,11 +148,9 @@ export function mountFilm(root, options = {}) {
       });
   }
 
-  /* On a phone this walks the WHOLE film outward from the playhead, so the
-     visible part arrives first and the rest lands behind it - by the time
-     anybody has scrolled through the opening, nothing is left to fetch. On a
-     desktop the film is 1,175 frames and far too heavy to hold, so it keeps to
-     a window and streams. */
+  /* On a phone this walks the whole film outward from the playhead, so the
+     visible part arrives first and the rest lands behind it. On a desktop it
+     keeps to a window and streams. */
   function fill() {
     const here = snap(playhead);
     const reach = phone ? FRAMES : (AHEAD + 1) * step;
@@ -187,15 +165,14 @@ export function mountFilm(root, options = {}) {
     }
   }
 
-  /* keep the decoded window around the playhead topped up from what is already
-     in memory: no network, just a decode */
+  /* top the decoded window up from what is already in memory: no network */
   function warm() {
     const here = snap(playhead);
     for (let d = 0; d <= AHEAD * step; d += step) {
       const a = snap(here + d);
-      const b2 = snap(here - d);
+      const b = snap(here - d);
       if (blobs.has(a)) decode(a, blobs.get(a));
-      if (blobs.has(b2)) decode(b2, blobs.get(b2));
+      if (blobs.has(b)) decode(b, blobs.get(b));
     }
   }
 
@@ -222,8 +199,7 @@ export function mountFilm(root, options = {}) {
   }
 
   /* A small readout, kept deliberately: the only way to know whether this is a
-     film or a slideshow is to count what actually reached the screen. Four
-     numbers, no sets, nothing that grows. */
+     film or a slideshow is to count what actually reached the screen. */
   const stats = { requested: 0, painted: 0, shown: 0, cached: 0 };
   window.__film = stats;
 
@@ -238,8 +214,13 @@ export function mountFilm(root, options = {}) {
     const w = img.naturalWidth || img.width;
     const h = img.naturalHeight || img.height;
     const scale = Math.max(canvas.width / w, canvas.height / h);
-    ctx.drawImage(img, (canvas.width - w * scale) / 2, (canvas.height - h * scale) / 2,
-                  w * scale, h * scale);
+    ctx.drawImage(
+      img,
+      (canvas.width - w * scale) / 2,
+      (canvas.height - h * scale) / 2,
+      w * scale,
+      h * scale
+    );
     /* what was drawn, not what was wanted: when the exact frame finishes
        decoding a moment later, this is what lets it replace the neighbour that
        stood in for it */
@@ -255,7 +236,44 @@ export function mountFilm(root, options = {}) {
     paint();
   }
 
-  /* ---------- the captions, positioned by the same progress ---------- */
+  /* ---------- the opening ----------
+     A frame sequence that begins on an empty canvas reads as a broken page, so
+     the page holds a title card until the first frames have decoded and reports
+     honestly how far along it is. It also gives up waiting: a visitor on a bad
+     connection should get the film late rather than the card forever. */
+  const boot = options.loader || null;
+  /* At the very top of the page the desktop window only reaches ten frames
+     forward, so asking for twelve meant the card never lifted on its own and
+     waited out the timeout instead. The card exists so nobody sees an empty
+     canvas; a handful of decoded frames is the whole bar. */
+  const NEEDED = phone ? 10 : 5;
+  let opened = false;
+
+  function opening() {
+    if (opened) return;
+    const ready = cache.size;
+    if (boot) {
+      const p = Math.min(1, ready / NEEDED);
+      boot.style.setProperty("--p", p.toFixed(3));
+      const pct = boot.querySelector("[data-pct]");
+      if (pct) pct.textContent = String(Math.round(p * 100)).padStart(3, "0");
+    }
+    if (ready >= NEEDED) open();
+  }
+
+  function open() {
+    if (opened) return;
+    opened = true;
+    root.dataset.ready = "true";
+    document.documentElement.dataset.filmReady = "true";
+    if (boot) {
+      boot.dataset.done = "true";
+      setTimeout(() => boot.remove(), 900);
+    }
+  }
+  setTimeout(open, 9000);
+
+  /* ---------- the narration, positioned by the same progress ---------- */
   const caps = [...stage.querySelectorAll("[data-cap]")].map((el) => ({
     el,
     at: Number(el.dataset.at || 0.5),
@@ -263,13 +281,14 @@ export function mountFilm(root, options = {}) {
     shown: -1,
   }));
   const intro = stage.querySelector("[data-intro]");
+  const FADE = 0.045;
 
   function captions(p) {
     if (intro) {
-      const o = 1 - Math.min(1, Math.max(0, (p - 0.02) / 0.1));
-      if (Math.abs(o - (intro._o ?? -1)) > 0.01) {
+      const o = 1 - Math.min(1, Math.max(0, (p - 0.015) / 0.09));
+      if (Math.abs(o - (intro._o === undefined ? -1 : intro._o)) > 0.01) {
         intro.style.opacity = o.toFixed(3);
-        intro.style.transform = `translateY(${(-34 * (1 - o)).toFixed(1)}px)`;
+        intro.style.transform = "translate3d(0," + (-30 * (1 - o)).toFixed(1) + "px,0)";
         intro._o = o;
       }
     }
@@ -277,15 +296,19 @@ export function mountFilm(root, options = {}) {
       const inAt = c.at;
       const outAt = c.at + c.hold;
       let o = 0;
-      if (p >= inAt - 0.04 && p <= outAt + 0.04) {
-        o = p < inAt ? (p - (inAt - 0.04)) / 0.04
-          : p > outAt ? 1 - (p - outAt) / 0.04
-          : 1;
+      if (p >= inAt - FADE && p <= outAt + FADE) {
+        o =
+          p < inAt
+            ? (p - (inAt - FADE)) / FADE
+            : p > outAt
+            ? 1 - (p - outAt) / FADE
+            : 1;
       }
       o = Math.min(1, Math.max(0, o));
       if (Math.abs(o - c.shown) > 0.01) {
         c.el.style.opacity = o.toFixed(3);
-        c.el.style.transform = `translateY(${(18 * (1 - o)).toFixed(1)}px)`;
+        c.el.style.transform = "translate3d(0," + (22 * (1 - o)).toFixed(1) + "px,0)";
+        c.el.setAttribute("aria-hidden", o < 0.5 ? "true" : "false");
         c.shown = o;
       }
     }
@@ -295,7 +318,6 @@ export function mountFilm(root, options = {}) {
      The scroll handler does nothing but flag; one animation frame later the
      progress is read once and the picture is drawn only if it changed. */
   let queued = false;
-  let lastTop = 0;
 
   function frame() {
     queued = false;
@@ -303,6 +325,7 @@ export function mountFilm(root, options = {}) {
     const span = root.offsetHeight - stage.clientHeight;
     const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
     playhead = p * (FRAMES - 1);
+    root.style.setProperty("--progress", p.toFixed(4));
     captions(p);
     const want = snap(playhead);
     if (want !== drawn) {
@@ -311,6 +334,7 @@ export function mountFilm(root, options = {}) {
       fill();
       evict();
     }
+    opening();
   }
 
   function onScroll() {
@@ -325,15 +349,28 @@ export function mountFilm(root, options = {}) {
   frame();
 
   if (reduced) {
-    /* no scrubbing: one frame from the middle, and every caption legible */
+    /* no scrubbing: one frame, and every line of the narration legible at once */
     root.style.setProperty("--screens", "1");
-    playhead = FRAMES * 0.55;
+    root.dataset.still = "true";
+    playhead = FRAMES * 0.06;
     fill();
-    caps.forEach((c) => (c.el.style.opacity = "1"));
+    caps.forEach((c) => {
+      c.el.style.opacity = "1";
+      c.el.style.transform = "none";
+      c.el.setAttribute("aria-hidden", "false");
+    });
     if (intro) intro.style.opacity = "1";
   } else {
     window.addEventListener("scroll", onScroll, { passive: true });
   }
+
+  /* a decode finishing is not a scroll, so the opening needs a beat of its own
+     until the page has something on screen */
+  const settle = setInterval(() => {
+    if (reduced) paint();
+    opening();
+    if (opened) clearInterval(settle);
+  }, 120);
 
   let resizeTimer = 0;
   window.addEventListener("resize", () => {
@@ -344,62 +381,5 @@ export function mountFilm(root, options = {}) {
     }, 150);
   });
 
-  return { paint, size };
-}
-
-/* every outgoing link is dead: this is a portfolio piece, and a visitor who
-   clicks one has to be told so rather than delivered to a real inbox */
-export function sealLinks(accent = "#fff", ink = "#000") {
-  let note;
-  const show = (what) => {
-    if (!note) {
-      note = document.createElement("div");
-      note.dir = "rtl";
-      note.innerHTML =
-        '<div class="seal-card"><b>אתר דמה</b>' +
-        "<p>זהו אתר הדגמה לתיק עבודות. הקישורים החיצוניים בו אינם פעילים.</p>" +
-        '<code></code><button type="button">הבנתי</button></div>';
-      note.style.cssText =
-        "position:fixed;inset:0;z-index:9999;display:none;align-items:center;" +
-        "justify-content:center;background:rgba(0,0,0,.76);backdrop-filter:blur(6px);" +
-        "font:500 1rem/1.6 Heebo,system-ui,sans-serif";
-      const css = document.createElement("style");
-      css.textContent =
-        ".seal-card{max-width:25rem;margin:1.5rem;padding:1.8rem;text-align:center;" +
-        "background:#101010;color:#e7e7e7;border:1px solid " + accent + ";border-radius:4px}" +
-        ".seal-card b{display:block;margin-bottom:.6rem;font-size:1.2rem;color:" + accent + "}" +
-        ".seal-card p{margin:0 0 .7rem}" +
-        ".seal-card code{display:block;margin-bottom:1rem;font-size:.78rem;opacity:.55;" +
-        "word-break:break-all}" +
-        ".seal-card button{padding:.6rem 1.4rem;font:700 .9rem Heebo,sans-serif;" +
-        "color:" + ink + ";background:" + accent + ";border:0;border-radius:2px;cursor:pointer}";
-      document.head.appendChild(css);
-      note.addEventListener("click", (e) => {
-        if (e.target === note || e.target.tagName === "BUTTON") note.style.display = "none";
-      });
-      document.body.appendChild(note);
-    }
-    note.querySelector("code").textContent = what;
-    note.style.display = "flex";
-  };
-
-  document.addEventListener(
-    "click",
-    (e) => {
-      const a = e.target.closest && e.target.closest("a[href]");
-      if (!a) return;
-      const href = a.getAttribute("href") || "";
-      if (a.dataset.dead !== undefined) {
-        e.preventDefault();
-        show(a.dataset.dead || href);
-        return;
-      }
-      if (!href || href.charAt(0) === "#") return;
-      if (/^(https?:|mailto:|tel:)/i.test(href)) {
-        e.preventDefault();
-        show(href);
-      }
-    },
-    true
-  );
+  return { paint, size, stats };
 }

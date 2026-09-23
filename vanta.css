@@ -1,0 +1,1071 @@
+/* ===========================================================================
+   VANTA — Systems for the edge of certainty
+
+   The footage carries the page, so the design gets out of its way: near-black
+   ground rather than pure black, one warm off-white, one steel grey, and a
+   single amber drawn from the fire in the frames. Everything structural is a
+   hairline. Nothing is rounded, nothing glows, nothing is decorative.
+
+   Type is set on a fixed scale with clamp() rather than at breakpoints, so the
+   same composition holds from 320px to 1440px instead of rearranging itself
+   three times.
+   =========================================================================== */
+
+:root {
+  /* ground */
+  --ink: #0b0c0d;
+  --ink-2: #101213;
+  --ink-3: #15181a;
+
+  /* ink on it */
+  --paper: #f0ede8;
+  --steel: #a9aeb1;
+  /* measured 4.25:1 on the ground at #70767a, which is under AA for the
+     mono labels and the quiet side of the comparison; this clears 4.9:1
+     and is still clearly the dimmer of the two greys */
+  --faint: #7c8285;
+  --amber: #e0873a;
+  /* the same amber, lifted, for the one place it sits on footage rather
+     than on the flat ground: over the bright sky at 01 / DETECT the
+     base amber measured 3.97:1 */
+  --amber-lift: #f0a55f;
+
+  /* structure */
+  --line: rgba(240, 237, 232, 0.13);
+  --line-2: rgba(240, 237, 232, 0.28);
+
+  /* measure */
+  --gut: clamp(1.25rem, 5vw, 5.5rem);
+  --max: 1360px;
+  --rule: clamp(3.5rem, 11vh, 8rem);
+
+  --sans: "Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.94rem + 0.28vw, 1.125rem);
+  line-height: 1.62;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+blockquote,
+ul,
+ol,
+dl {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--amber);
+  color: #12100d;
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 200;
+  padding: 0.7rem 1.2rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 0.9rem var(--sans);
+  text-decoration: none;
+}
+.skip:focus {
+  top: 0;
+}
+
+.shell {
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+}
+
+/* --- the type scale ------------------------------------------------------ */
+
+.display {
+  /* the hero line and the two manifesto lines: the only type at this size */
+  font-size: clamp(2.35rem, 1.1rem + 6.2vw, 6.6rem);
+  line-height: 0.95;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.heading {
+  font-size: clamp(1.8rem, 1.1rem + 2.9vw, 3.6rem);
+  line-height: 1.04;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.label {
+  display: block;
+  font-family: var(--mono);
+  font-size: clamp(0.66rem, 0.63rem + 0.12vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.label--amber {
+  color: var(--amber);
+}
+
+.lede {
+  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--steel);
+  letter-spacing: -0.012em;
+}
+
+.rule {
+  height: 1px;
+  border: 0;
+  background: var(--line);
+}
+
+/* =========================================================================
+   MASTHEAD
+   ========================================================================= */
+
+.masthead {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 3rem);
+  padding: clamp(0.9rem, 2vh, 1.4rem) var(--gut);
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
+  border-bottom: 1px solid transparent;
+}
+
+.masthead[data-solid="true"] {
+  background: rgba(11, 12, 13, 0.86);
+  border-bottom-color: var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.wordmark {
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.2rem);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-decoration: none;
+  text-indent: 0.34em; /* letter-spacing adds a trailing gap; this re-centres it */
+}
+
+.masthead nav {
+  display: flex;
+  gap: clamp(1.2rem, 2.4vw, 2.4rem);
+  margin-inline-start: auto;
+}
+
+.masthead nav a {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--steel);
+  transition: color 0.25s var(--ease);
+}
+
+.masthead nav a:hover {
+  color: var(--paper);
+}
+
+@media (max-width: 860px) {
+  .masthead nav {
+    display: none;
+  }
+  .masthead::after {
+    content: "SYSTEMS FOR THE EDGE OF CERTAINTY";
+    margin-inline-start: auto;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.16em;
+    color: var(--faint);
+  }
+}
+
+@media (max-width: 430px) {
+  .masthead::after {
+    content: "EDGE OF CERTAINTY";
+  }
+}
+
+/* =========================================================================
+   THE OPENING CARD
+
+   Shown until the first frames have decoded, then faded out. It is the
+   wordmark and one honest counter, nothing else.
+   ========================================================================= */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-content: center;
+  gap: 1.6rem;
+  justify-items: center;
+  background: var(--ink);
+  transition: opacity 0.7s var(--ease), visibility 0.7s;
+}
+
+.boot[data-done="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot__mark {
+  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+}
+
+.boot__line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--faint);
+}
+
+.boot__bar {
+  position: relative;
+  width: clamp(9rem, 30vw, 16rem);
+  height: 1px;
+  background: var(--line-2);
+}
+
+.boot__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--amber);
+  transition: width 0.3s linear;
+}
+
+/* =========================================================================
+   THE FILM
+   ========================================================================= */
+
+.film {
+  position: relative;
+  height: calc(var(--screens, 5) * 100vh);
+  height: calc(var(--screens, 5) * 100svh);
+  background: #000;
+}
+
+.film[data-still="true"] {
+  height: 100svh;
+}
+
+.film-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: clip;
+}
+
+.film-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* A single vignette, so the masthead and the narration have somewhere to sit.
+   Nothing else is laid over the footage. */
+.film-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+      180deg,
+      rgba(8, 9, 10, 0.72) 0%,
+      rgba(8, 9, 10, 0) 26%,
+      rgba(8, 9, 10, 0) 62%,
+      rgba(8, 9, 10, 0.78) 100%
+    );
+}
+
+.film-progress {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 4;
+  height: 1px;
+  background: var(--line);
+}
+
+.film-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--progress, 0) * 100%);
+  background: var(--amber);
+}
+
+/* --- the opening statement, over the dark interior --- */
+
+.intro {
+  position: absolute;
+  z-index: 3;
+  inset-inline: var(--gut);
+  bottom: clamp(3.5rem, 13vh, 8rem);
+  max-width: 54rem;
+  will-change: opacity, transform;
+}
+
+.intro__label {
+  margin-bottom: clamp(1rem, 3vh, 1.8rem);
+  color: var(--steel);
+}
+
+.intro .display {
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.6);
+}
+
+.intro__sub {
+  max-width: 34rem;
+  margin-top: clamp(1.1rem, 3vh, 1.8rem);
+  color: #e2ded7;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.85);
+}
+
+.intro__scroll {
+  color: var(--steel);
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: clamp(1.6rem, 4vh, 2.6rem);
+}
+
+.intro__scroll::after {
+  content: "";
+  width: clamp(2.5rem, 8vw, 5rem);
+  height: 1px;
+  background: var(--line-2);
+  animation: reach 2.6s var(--ease) infinite;
+  transform-origin: left;
+}
+
+@keyframes reach {
+  0%,
+  100% {
+    transform: scaleX(0.35);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* --- the four narrative statements --- */
+
+.beat {
+  position: absolute;
+  z-index: 3;
+  max-width: min(30rem, 62vw);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/* Some of the footage is a white wall in daylight, and a text-shadow is not
+   enough on it. This is the only mask laid over the film: a soft ellipse
+   centred on the words, wide enough that its edge is never a visible shape,
+   and anchored to whichever side the statement sits on. */
+.beat::before {
+  content: "";
+  position: absolute;
+  inset: -7rem -16vw;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 56% 50% at 50% 50%,
+    rgba(7, 8, 9, 0.66) 0%,
+    rgba(7, 8, 9, 0.46) 46%,
+    rgba(7, 8, 9, 0) 82%
+  );
+}
+
+.beat__num {
+  display: block;
+  margin-bottom: 0.9rem;
+  font-family: var(--mono);
+  font-size: clamp(0.66rem, 0.63rem + 0.12vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--amber-lift);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.95);
+}
+
+.beat__text {
+  font-size: clamp(1.4rem, 0.9rem + 2vw, 2.5rem);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85), 0 2px 38px rgba(0, 0, 0, 0.8);
+}
+
+/* asymmetric by design: the statements move around the frame rather than
+   sitting in one safe column */
+.beat--a {
+  inset-inline-start: var(--gut);
+  top: 22%;
+}
+.beat--b {
+  inset-inline-end: var(--gut);
+  bottom: 24%;
+  text-align: end;
+}
+.beat--c {
+  inset-inline-start: var(--gut);
+  bottom: 22%;
+}
+.beat--d {
+  inset-inline-end: var(--gut);
+  top: 24%;
+  text-align: end;
+}
+
+.beat--close {
+  inset-inline: var(--gut);
+  top: 50%;
+  translate: 0 -50%;
+  max-width: min(64rem, 94vw);
+  text-align: center;
+  margin-inline: auto;
+}
+
+.beat--close::before {
+  inset: -9rem -18vw;
+  background: radial-gradient(
+    ellipse 58% 52% at 50% 50%,
+    rgba(7, 8, 9, 0.74) 0%,
+    rgba(7, 8, 9, 0.54) 46%,
+    rgba(7, 8, 9, 0) 84%
+  );
+}
+
+.beat--close .beat__text {
+  font-size: clamp(1.5rem, 0.7rem + 3.1vw, 3.5rem);
+  line-height: 1.1;
+  /* the two lines are written, not balanced: balancing them fought the break */
+  text-wrap: normal;
+}
+
+@media (max-width: 700px) {
+  .beat {
+    max-width: none;
+    inset-inline: var(--gut);
+    text-align: start;
+  }
+  .beat::before {
+    inset: -6rem -18vw;
+  }
+  .beat--a,
+  .beat--d {
+    top: auto;
+    bottom: 22%;
+  }
+  .beat--b,
+  .beat--c {
+    bottom: 22%;
+  }
+  .beat--close {
+    top: 50%;
+    bottom: auto;
+    text-align: center;
+  }
+}
+
+/* =========================================================================
+   SECTIONS
+   ========================================================================= */
+
+.band {
+  padding-block: clamp(4.5rem, 14vh, 10rem);
+  border-top: 1px solid var(--line);
+}
+
+.band--flush {
+  border-top: 0;
+}
+
+/* reveal on entry: one transform, one opacity, once */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+
+[data-reveal][data-seen="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .intro__scroll::after {
+    animation: none;
+  }
+}
+
+/* --- the principle ------------------------------------------------------- */
+
+.principle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+@media (min-width: 900px) {
+  .principle {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+}
+
+.principle__head .label {
+  margin-bottom: clamp(1.4rem, 4vh, 2.4rem);
+}
+
+.principle__body {
+  padding-top: clamp(0.6rem, 2vh, 1.2rem);
+}
+
+.principle__body p + p {
+  margin-top: 1.2rem;
+}
+
+/* --- the system map: type and hairlines, nothing else -------------------- */
+
+.map {
+  margin-top: clamp(3rem, 9vh, 6rem);
+  border-top: 1px solid var(--line);
+  padding-top: clamp(1.6rem, 4vh, 2.6rem);
+}
+
+.map__row {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 760px) {
+  .map__row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.map__step {
+  position: relative;
+  background: var(--ink);
+  padding: clamp(1.3rem, 3.4vh, 2.2rem) clamp(1rem, 2.4vw, 1.9rem)
+    clamp(1.6rem, 4vh, 2.6rem);
+}
+
+.map__step .label {
+  margin-bottom: 0.9rem;
+}
+
+.map__step b {
+  display: block;
+  font-size: clamp(1.15rem, 1rem + 0.8vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.map__step span {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--steel);
+}
+
+/* the arrow straddles the hairline between one step and the next, so the row
+   reads as a flow rather than as four boxes that each happen to have a mark */
+.map__step::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline-end: -4px;
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid var(--amber);
+  border-right: 1px solid var(--amber);
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--ink);
+}
+
+/* the last step is where the flow ends, so it has nothing after it */
+.map__step:last-child::after {
+  content: none;
+}
+
+@media (max-width: 759px) {
+  /* two per row: the arrow at the end of each row would point off the page */
+  .map__step:nth-child(2n)::after {
+    content: none;
+  }
+}
+
+/* --- the three capabilities ---------------------------------------------- */
+
+.cap {
+  display: grid;
+  gap: clamp(1.6rem, 5vw, 4rem);
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .cap {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  /* each of the three has a different rhythm rather than one repeated card */
+  .cap--wide {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  }
+  .cap--tall {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+  .cap--flip .cap__figure {
+    order: -1;
+  }
+}
+
+.cap__figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--ink-2);
+  aspect-ratio: 16 / 10;
+}
+
+.cap--tall .cap__figure {
+  aspect-ratio: 4 / 3;
+}
+
+.cap__figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cap__figure figcaption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 2.5rem 1rem 0.7rem;
+  background: linear-gradient(transparent, rgba(8, 9, 10, 0.88) 62%);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.cap__name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin-bottom: clamp(1rem, 3vh, 1.7rem);
+}
+
+.cap__name b {
+  font-family: var(--mono);
+  font-size: clamp(0.66rem, 0.63rem + 0.12vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.cap__name i {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  font-style: normal;
+}
+
+.cap__copy {
+  max-width: 33rem;
+  margin-top: clamp(0.9rem, 2.4vh, 1.4rem);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  margin-top: clamp(1.5rem, 4vh, 2.4rem);
+  padding-top: clamp(1rem, 2.6vh, 1.5rem);
+  border-top: 1px solid var(--line);
+}
+
+.meta li {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* --- the difference ------------------------------------------------------ */
+
+.versus {
+  display: grid;
+  gap: 1px;
+  margin-top: clamp(2.6rem, 8vh, 5rem);
+  background: var(--line);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 760px) {
+  .versus {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.versus__side {
+  background: var(--ink);
+  padding: clamp(1.6rem, 4.5vh, 3rem) clamp(1.2rem, 3vw, 2.6rem);
+}
+
+.versus__side .label {
+  margin-bottom: clamp(1.2rem, 3vh, 2rem);
+}
+
+.versus__side li {
+  padding-block: clamp(0.7rem, 1.8vh, 1.1rem);
+  border-top: 1px solid var(--line);
+  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  color: var(--faint);
+}
+
+.versus__side--with li {
+  color: var(--paper);
+}
+
+.versus__side--with li::before {
+  content: "";
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  margin-inline-end: 0.9rem;
+  vertical-align: middle;
+  background: var(--amber);
+}
+
+.versus__side--without li::before {
+  content: "";
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  margin-inline-end: 0.9rem;
+  vertical-align: middle;
+  background: var(--line-2);
+}
+
+/* --- engineering --------------------------------------------------------- */
+
+.proof {
+  display: grid;
+  gap: 1px;
+  margin-top: clamp(2.6rem, 8vh, 5rem);
+  background: var(--line);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 620px) {
+  .proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1020px) {
+  .proof {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.proof__item {
+  background: var(--ink);
+  padding: clamp(1.4rem, 3.6vh, 2.2rem) clamp(1.1rem, 2.4vw, 1.8rem);
+}
+
+.proof__item .label {
+  margin-bottom: 1.4rem;
+}
+
+.proof__item b {
+  display: block;
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.proof__item p {
+  margin-top: 0.6rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--steel);
+}
+
+/* --- the close ----------------------------------------------------------- */
+
+.close {
+  padding-block: clamp(6rem, 20vh, 13rem);
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
+.close .display {
+  max-width: 22ch;
+  margin-inline: auto;
+}
+
+.enter {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: clamp(2.4rem, 7vh, 4rem);
+  padding: clamp(0.85rem, 2vh, 1.15rem) clamp(1.5rem, 4vw, 2.6rem);
+  border: 1px solid var(--line-2);
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 0.66rem + 0.16vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+
+.enter::after {
+  content: "";
+  width: 1.4rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s var(--ease);
+}
+
+.enter:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
+.enter:hover::after {
+  width: 2.2rem;
+}
+
+/* --- footer -------------------------------------------------------------- */
+
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  align-items: baseline;
+  padding-block: clamp(2rem, 6vh, 3.4rem);
+  border-top: 1px solid var(--line);
+}
+
+.colophon .wordmark {
+  font-size: 0.95rem;
+}
+
+.colophon p {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.colophon p:last-child {
+  margin-inline-start: auto;
+}
+
+/* =========================================================================
+   THE DEMO NOTICE
+
+   The one interactive thing on the page, and it exists to tell the truth
+   about the page rather than to collect anything.
+   ========================================================================= */
+
+/* a <dialog> is display:none until it is opened; setting display here would
+   override that and leave the notice on the page from the first paint */
+.notice {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: none;
+  place-items: center;
+  padding: var(--gut);
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  color: var(--paper);
+  overflow: hidden;
+}
+
+.notice[open] {
+  display: grid;
+}
+
+.notice::backdrop {
+  background: rgba(6, 7, 8, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.notice__card {
+  position: relative;
+  width: min(34rem, 100%);
+  padding: clamp(1.8rem, 5vh, 3rem);
+  background: var(--ink-2);
+  border: 1px solid var(--line-2);
+  text-align: start;
+  animation: lift 0.45s var(--ease);
+}
+
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice__card {
+    animation: none;
+  }
+}
+
+.notice__card .label {
+  margin-bottom: 1.4rem;
+}
+
+.notice__card h2 {
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.notice__card p {
+  margin-top: 1rem;
+  color: var(--steel);
+  font-size: 1rem;
+}
+
+.notice__close {
+  margin-top: clamp(1.6rem, 4vh, 2.2rem);
+  padding: 0.75rem 1.6rem;
+  border: 1px solid var(--line-2);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.notice__x {
+  position: absolute;
+  top: 0.7rem;
+  inset-inline-end: 0.7rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  background: transparent;
+  color: var(--faint);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.notice__x:hover {
+  color: var(--paper);
+}
