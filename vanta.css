@@ -683,6 +683,12 @@ a {
   padding-top: clamp(1.6rem, 4vh, 2.6rem);
 }
 
+/* the row needed saying what it is; without it the four steps read as four
+   unrelated statements sitting above the section they actually explain */
+.map__lead {
+  margin-bottom: clamp(1.4rem, 4vh, 2.3rem);
+}
+
 .map__row {
   display: grid;
   gap: 1px;
