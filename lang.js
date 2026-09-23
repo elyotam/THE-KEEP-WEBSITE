@@ -43,9 +43,8 @@
       buttons[j].setAttribute("aria-pressed", String(buttons[j].dataset.lang === lang));
     }
 
-    /* the film is pinned by scroll position, and the page's height changes with
-       its language: without this the footage and the page fall out of step */
-    if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+    /* nothing to re-measure: the film is sticky, so its geometry is the
+       browser's business rather than a script's */
   }
 
   document.addEventListener("click", function (e) {

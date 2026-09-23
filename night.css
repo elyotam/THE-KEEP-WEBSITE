@@ -215,12 +215,22 @@ header nav + .lang {
 }
 
 /* --------------------------------------------------------------- the film */
+/* The film is a tall section with a sticky stage inside it. Nothing is pinned
+   by script: sticky is handled by the compositor, and on a phone - where the
+   URL bar changes the viewport height on almost every scroll - a pinned element
+   means re-measuring the page over and over. */
 .film {
   position: relative;
+  height: calc(var(--screens, 4) * 100vh);
+  height: calc(var(--screens, 4) * 100svh);
+  background: #000;
+}
+.film-stage {
+  position: sticky;
+  top: 0;
   height: 100vh;
   height: 100svh;
   overflow: clip;
-  background: #000;
 }
 .film-canvas {
   position: absolute;
@@ -228,12 +238,16 @@ header nav + .lang {
   width: 100%;
   height: 100%;
 }
-.film::after {
+.film-stage::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(120% 90% at 50% 45%, transparent 38%, rgba(0, 0, 0, 0.74) 100%);
+}
+.film-copy,
+[data-cap] {
+  will-change: opacity, transform;
 }
 
 .film-copy {
