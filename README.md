@@ -82,8 +82,13 @@ Checked with Playwright at 1440, 1024, 768, 390 and 320:
 - the narration over the footage is measured from **rendered pixels**, because
   there is no background colour to check against — there is a picture. The
   lowest line clears 5.9:1
-- the film scrubs at 60fps with a software GPU and a 10× CPU throttle, with 119
-  distinct frames reaching the screen
+- the film scrubs, measured on the live site with a software GPU, at 60fps
+  unthrottled (119 of 119 frames reaching the screen), 52fps at a 6× CPU
+  throttle (116 frames) and 47fps at a brutal 10× throttle (111 frames)
+- a 10×-throttled device has the whole film fetched and decoded about 7 seconds
+  after the page opens, and everything else in about 3. Until then the opening
+  card is up and the hero frame is what is on screen; a scrub begun before that
+  is the one case that can still stutter
 - the notice opens, takes focus, and closes on Escape and on its button
 - `prefers-reduced-motion` gets one still frame and every statement visible at
   once, with no scrubbing
