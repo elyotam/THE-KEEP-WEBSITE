@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
-   VANTA — page behaviour
+   THE KEEP — page behaviour
 
    Four small things, and deliberately nothing else: mount the film, reveal
    sections once as they arrive, solidify the masthead once the film is behind

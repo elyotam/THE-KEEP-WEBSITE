@@ -1,5 +1,5 @@
 /* ===========================================================================
-   VANTA — Systems for the edge of certainty
+   THE KEEP — What is learned here is kept
 
    The footage carries the page, so the design gets out of its way: near-black
    ground rather than pure black, one warm off-white, one steel grey, and a
@@ -26,7 +26,7 @@
   --faint: #7c8285;
   --amber: #e0873a;
   /* the same amber, lifted, for the one place it sits on footage rather
-     than on the flat ground: over the bright sky at 01 / DETECT the
+     than on the flat ground: over the bright sky at 01 / LEARN the
      base amber measured 3.97:1 */
   --amber-lift: #f0a55f;
 
@@ -231,7 +231,7 @@ a {
     display: none;
   }
   .masthead::after {
-    content: "SYSTEMS FOR THE EDGE OF CERTAINTY";
+    content: "WHAT IS LEARNED HERE IS KEPT";
     margin-inline-start: auto;
     font-family: var(--mono);
     font-size: 0.56rem;
@@ -242,7 +242,7 @@ a {
 
 @media (max-width: 430px) {
   .masthead::after {
-    content: "EDGE OF CERTAINTY";
+    content: "LEARNED HERE, KEPT HERE";
   }
 }
 

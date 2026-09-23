@@ -1,10 +1,10 @@
-# VANTA
+# THE KEEP
 
-**Systems for the edge of certainty.**
+**What is learned here is kept.**
 
-A single-page brand experience for a fictional autonomous aerospace and
-intelligence-systems company, built as a portfolio demonstration. The company
-does not exist; the systems, the copy and the brand were written for this page.
+A single-page brand experience for a fictional operational training school,
+built as a portfolio demonstration. The school does not exist; the institution,
+the courses and every line of copy were written for this page.
 
 Live: https://elyotam.github.io/nightglass-website/
 
@@ -14,8 +14,8 @@ Live: https://elyotam.github.io/nightglass-website/
 
 The page is a scroll-driven film. A 1,175-frame sequence plays in its original
 cinematic colour as you scroll, with five statements timed to the scenes beneath
-them, and the rest of the site — the principle, three systems, a comparison, the
-engineering section and the close — laid out underneath it.
+them, and the rest of the site — the purpose, the three parts of the school, a
+comparison, the method and the close — laid out underneath it.
 
 Nothing is tinted, graded or overlaid. The palette is taken from the footage
 itself: near-black ground, warm off-white, muted steel, and one amber drawn from
@@ -28,6 +28,10 @@ the fire in the frames.
 | `index.html` | The whole page. Semantic, English, one document. |
 | `vanta.css` | Every style, on CSS custom properties. No framework. |
 | `vanta.js` | Mounts the film, reveals sections on entry, runs the notice. |
+
+The two `vanta.*` filenames are from an earlier version of this page and were
+deliberately left alone when the copy changed, so that nothing but the words
+moved.
 | `film.js` | The frame player. The interesting file — see below. |
 | `frames/` | 1,175 frames at 1344×768, the originals. Not modified. |
 | `frames-mobile/` | The same film cropped to portrait at 432×768, for phones. |
@@ -95,7 +99,7 @@ Checked with Playwright at 1440, 1024, 768, 390 and 320:
 
 ## Honest by construction
 
-No link on this page goes anywhere outside it. There is no form, no contact
-route, no fabricated customer, certification, metric or testimonial, and no
-claim of any real affiliation. The one button opens a notice saying exactly what
-the page is.
+No link on this page goes anywhere outside it. There is no form, no application
+route, no fabricated graduate, accreditation, metric or testimonial, and no claim
+of any real affiliation with any service, unit or institution. The one button
+opens a notice saying exactly what the page is.
