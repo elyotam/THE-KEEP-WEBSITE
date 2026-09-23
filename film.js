@@ -3,7 +3,7 @@
 
    A 1,175-frame sequence scrubbed by the scroll, in its original colour. The
    footage is the whole argument of this page, so nothing here tints, grades or
-   overlays it — the only job is to put the right frame on the screen at the
+   overlays it. The only job is to put the right frame on the screen at the
    right moment, on a phone as well as on a desktop.
 
    The architecture below is the second design of it. The first was smooth on
@@ -17,14 +17,14 @@
    recalculation. Nothing here reads layout during a scroll.
 
    A PHONE PLAYS A SHORTER FILM, AND HOLDS ALL OF IT DECODED. Chasing 1,175
-   frames while somebody scrolls does not work — measured over a real scroll the
+   frames while somebody scrolls does not work. Measured over a real scroll the
    loader fell so far behind that eleven distinct frames reached the screen,
    which is not a film, it is a stutter. Fetching them all up front fixed the
    network but not the decode: a fast scrub still outran it.
 
    So on a phone every tenth frame is fetched and decoded once, before it is
    needed, at the size the phone will actually draw, and then kept. That is 118
-   frames at 320px wide — about 2MB over the wire — after which a scrub costs
+   frames at 320px wide, about 2MB over the wire, after which a scrub costs
    one drawImage and nothing else, at any speed. A desktop streams a bounded
    window instead, because 1,175 full-size frames are far too heavy to hold.
 

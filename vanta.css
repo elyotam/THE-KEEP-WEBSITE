@@ -1,5 +1,5 @@
 /* ===========================================================================
-   THE KEEP — What is learned here is kept
+   THE KEEP: what is learned here is kept
 
    The footage carries the page, so the design gets out of its way: near-black
    ground rather than pure black, one warm off-white, one steel grey, and a
@@ -1148,7 +1148,7 @@ html[dir="rtl"] .map__step::after {
 
    The page defaults to Hebrew. Heebo carries the Hebrew glyphs and Inter Tight
    the Latin ones, so a line with a brand name in it renders in both without
-   being marked up for it — the browser falls back per glyph.
+   being marked up for it, because the browser falls back per glyph.
 
    Hebrew does not take the tracking a Latin grotesk wants. Tight negative
    tracking smears the letterforms together, and the wide tracking that makes a

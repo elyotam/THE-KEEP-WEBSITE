@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"
+     role="img" aria-label="THE KEEP">
+  <title>THE KEEP</title>
+  <!--
+    The mark is the brand's own sentence: a record, held inside something that
+    does not let go of it.
+
+    The frame is the institution. The three bars are the record, and the top
+    one is amber because it is the entry that was added most recently: the
+    archive is still being written. Nothing crosses the frame, which is the
+    whole argument of the page - what is learned here does not leave with the
+    person who learned it.
+
+    Drawn on a 64 grid with 4px strokes so it survives being shown at 16px in
+    a browser tab, where a hairline version of the same idea would disappear.
+  -->
+  <rect x="7" y="7" width="50" height="50" fill="none" stroke="#f0ede8" stroke-width="4" />
+  <rect x="18" y="19" width="28" height="4" fill="#e0873a" />
+  <rect x="18" y="30" width="28" height="4" fill="#f0ede8" />
+  <rect x="18" y="41" width="28" height="4" fill="#f0ede8" />
+</svg>

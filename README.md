@@ -1,3 +1,5 @@
+<img src="./banner.svg" alt="THE KEEP. What is learned here is kept." width="100%" />
+
 # THE KEEP
 
 **What is learned here is kept.**
@@ -8,7 +10,10 @@ the courses and every line of copy were written for this page.
 
 The page is in Hebrew by default and switches to English from the masthead.
 
-Live: https://elyotam.github.io/the-keep-website/
+Live: https://elyotam.github.io/THE-KEEP-WEBSITE/
+
+The repository name is capitalised, and GitHub Pages paths are
+case-sensitive, so the lowercase spelling of that link does not resolve.
 
 ---
 
@@ -16,8 +21,8 @@ Live: https://elyotam.github.io/the-keep-website/
 
 The page is a scroll-driven film. A 1,175-frame sequence plays in its original
 cinematic colour as you scroll, with five statements timed to the scenes beneath
-them, and the rest of the site — the purpose, the three parts of the school, a
-comparison, the method and the close — laid out underneath it.
+them. The rest of the site sits underneath it: the purpose, the three parts of
+the school, a comparison, the method and the close.
 
 Nothing is tinted, graded or overlaid. The palette is taken from the footage
 itself: near-black ground, warm off-white, muted steel, and one amber drawn from
@@ -34,8 +39,10 @@ the fire in the frames.
 The two `vanta.*` filenames are from an earlier version of this page and were
 deliberately left alone when the copy changed, so that nothing but the words
 moved.
-| `film.js` | The frame player. The interesting file — see below. |
+| `film.js` | The frame player. The interesting file; see below. |
 | `lang.js` | Hebrew and English, switched in place. |
+| `logo.svg` | The mark. Also the favicon. |
+| `banner.svg` | The lockup at the top of this file. |
 | `frames/` | 1,175 frames at 1344×768, the originals. Not modified. |
 | `frames-mobile/` | The same film cropped to portrait at 432×768, for phones. |
 
@@ -53,8 +60,8 @@ so the parts that were merely expensive were removed rather than tuned:
   On a phone the URL bar alone changes the viewport height constantly. Nothing
   in the player reads layout during a scroll.
 - **A phone plays a shorter film and holds all of it.** Every tenth frame, at
-  the portrait crop, decoded to 320px before it is needed and then kept — 118
-  frames, about 2MB over the wire. After that a scrub costs one `drawImage` and
+  the portrait crop, decoded to 320px before it is needed and then kept. That
+  is 118 frames, about 2MB over the wire. After that a scrub costs one `drawImage` and
   nothing else, at any speed. Chasing frames during a scroll does not work: when
   it was tried, eleven distinct frames reached the screen over a full scrub.
 - **A desktop streams a bounded window.** 1,175 full-size frames are far too
@@ -68,11 +75,21 @@ so the parts that were merely expensive were removed rather than tuned:
 `window.__film` exposes `{ requested, painted, shown, cached }`, which is the
 only honest way to tell whether the thing is a film or a slideshow.
 
+## The mark
+
+A record held inside something that does not let go of it. The frame is the
+institution, the three bars are the record, and the top one is amber because it
+is the entry added most recently: the archive is still being written. Nothing
+crosses the frame, which is the argument the whole page makes.
+
+It is drawn on a 64 grid with 4px strokes rather than hairlines, so that it
+still reads at 16px in a browser tab.
+
 ## Hebrew and English
 
 Hebrew is the page. English lives in `data-en` attributes on the element that
-owns the sentence — so a translation cannot drift away from the line it
-translates, because the two are the same element. There is no dictionary file
+owns the sentence, so a translation cannot drift away from the line it
+translates: the two are the same element. There is no dictionary file
 to keep in step, and nothing can be missed or translated twice. `lang.js`
 handles four attributes (`data-en`, `data-en-alt`, `data-en-aria`,
 `data-en-content`), which covers everything including the `<title>`.
@@ -82,7 +99,7 @@ first paint, so a returning visitor never sees a frame of the wrong language.
 `?lang=he` and `?lang=en` override it.
 
 The layout was written with logical properties, so Hebrew needed only five
-declarations changed — the two progress bars, the skip link, and the direction
+declarations changed: the two progress bars, the skip link, and the direction
 of the flow arrow in the process row.
 
 ## Preview
@@ -93,7 +110,7 @@ Any static server, from the repository root:
 python -m http.server 8094
 ```
 
-Then open <http://127.0.0.1:8094/>. There is no build step — what is in the
+Then open <http://127.0.0.1:8094/>. There is no build step. What is in the
 repository is what GitHub Pages serves.
 
 ## Measured, not assumed
@@ -107,7 +124,7 @@ Checked with Playwright at 1440, 1024, 768, 390 and 320:
   hiding that one element and photographing the same rectangle again: the
   pixels that changed are the letters, and nothing else is. Ink is the glyph
   cores; ground is the ring just outside them. Every percentile shortcut tried
-  before this was wrong in both directions — it called a readable label 1.74:1
+  before this was wrong in both directions. It called a readable label 1.74:1
   because the element's box was mostly bare photograph, and then called
   readable lines 2.3:1 because a light fitting sat inside the crop
 - the film scrubs, measured on the live site with a software GPU, at 60fps
