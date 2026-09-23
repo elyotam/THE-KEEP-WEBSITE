@@ -13,6 +13,14 @@
    =========================================================================== */
 
 .a11y-root {
+  /* The one line to change when reusing this. Here it is the mean colour of
+     the uniforms in the opening frame, so the button belongs to the page.
+     Whatever replaces it has to clear 4.5:1 against #f0ede8 for the icon and
+     3:1 against the page behind the button. */
+  --a11y-accent: #705c47;
+  --a11y-accent-dark: #5a4936;
+  --a11y-accent-soft: #f3efe9;
+
   position: fixed;
   inset: 0;
   z-index: 2147483000;
@@ -32,7 +40,7 @@
 }
 
 .a11y-root :focus-visible {
-  outline: 3px solid #1b63d8;
+  outline: 3px solid var(--a11y-accent);
   outline-offset: 2px;
 }
 
@@ -45,10 +53,10 @@
   width: 56px;
   height: 56px;
   padding: 0;
-  border: 2px solid #ffffff;
+  border: 2px solid #f0ede8;
   border-radius: 50%;
-  background: #1b63d8;
-  color: #ffffff;
+  background: var(--a11y-accent);
+  color: #f0ede8;
   cursor: pointer;
   pointer-events: auto;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
@@ -58,7 +66,7 @@
 }
 
 .a11y-fab:hover {
-  background: #14479c;
+  background: var(--a11y-accent-dark);
   transform: scale(1.06);
 }
 
@@ -264,13 +272,13 @@
 }
 
 .a11y-toggle[aria-pressed="true"] {
-  border-color: #1b63d8;
-  background: #eaf1fd;
+  border-color: var(--a11y-accent);
+  background: var(--a11y-accent-soft);
   font-weight: 700;
 }
 
 .a11y-toggle[aria-pressed="true"] .a11y-sw {
-  background: #1b63d8;
+  background: var(--a11y-accent);
 }
 
 .a11y-toggle[aria-pressed="true"] .a11y-sw::after {
@@ -419,9 +427,9 @@ html.a11y-links body a:not(.a11y-root a) {
 
 /* headings */
 html.a11y-headings body :is(h1, h2, h3, h4, h5, h6):not(.a11y-root *) {
-  outline: 2px dashed rgba(27, 99, 216, 0.85);
+  outline: 2px dashed rgba(224, 135, 58, 0.9);
   outline-offset: 4px;
-  background: rgba(27, 99, 216, 0.1);
+  background: rgba(224, 135, 58, 0.14);
 }
 
 /* bigger hit areas, in a way that cannot collapse a layout */
