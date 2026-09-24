@@ -79,10 +79,18 @@ const enter = document.getElementById("enter");
 if (notice && enter) {
   const supported = typeof notice.showModal === "function";
 
+  /* the top layer paints above the reticle, so the real pointer comes back
+     for as long as the notice is up */
+  const marked = (on) => document.documentElement.classList.toggle("modal-open", on);
+
   enter.addEventListener("click", () => {
     if (supported) notice.showModal();
     else notice.setAttribute("open", "");
+    marked(true);
   });
+
+  /* Escape closes a <dialog> natively and never reaches close() below */
+  notice.addEventListener("close", () => marked(false));
 
   notice.addEventListener("click", (event) => {
     /* the card is the only thing inside, so a click that lands on the dialog
@@ -94,6 +102,7 @@ if (notice && enter) {
   function close() {
     if (supported) notice.close();
     else notice.removeAttribute("open");
+    marked(false);
   }
 }
 

@@ -1241,6 +1241,20 @@ html[lang="he"] .beat__text {
   html.has-reticle .a11y-root * {
     cursor: auto;
   }
+
+  /* A <dialog> opened with showModal() lives in the top layer, above every
+     z-index, so the reticle cannot be drawn over it. Rather than leave the
+     modal with no pointer at all, the real one comes back while it is up. */
+  html.has-reticle.modal-open body,
+  html.has-reticle.modal-open body * {
+    cursor: auto;
+  }
+  html.has-reticle.modal-open :is(a, button, [role="button"], summary) {
+    cursor: pointer;
+  }
+  html.modal-open .reticle {
+    display: none;
+  }
   html.has-reticle .a11y-root :is(a, button, [role="button"]) {
     cursor: pointer;
   }
