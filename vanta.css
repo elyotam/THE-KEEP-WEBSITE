@@ -978,6 +978,17 @@ html[dir="rtl"] .map__step::after {
   margin-inline: auto;
 }
 
+/* On a phone both sentences of the closing line wrapped, which left the last
+   word of the punchline alone on a line of its own. The line is the last
+   thing on the page and has to land, so here it is sized to hold one sentence
+   per line instead. */
+@media (max-width: 620px) {
+  .close .display {
+    font-size: clamp(1.55rem, 1rem + 3.4vw, 2.3rem);
+    max-width: none;
+  }
+}
+
 .enter {
   display: inline-flex;
   align-items: center;
